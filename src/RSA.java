@@ -1,74 +1,23 @@
+import org.apache.commons.codec.binary.Base64;
 
+import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
-/**
- * The encryption/decryption class for string and char
- * Currently only support ASCII
- *
- * More charset will be supported soon,
- * and enc/dec files will be supported soon.
- *
- * @author tyraellee
- * */
-public class EncDecStr {
-    private static int[] transform(String message){
-        byte[] arr = message.getBytes(StandardCharsets.US_ASCII);
-        int[] out = new int[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            out[i] = arr[i];
-        }
-        return out;
-    }
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
 
-    private static String transform(int[] arr){
-        byte[] string = new byte[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            string[i] = (byte)arr[i];
-        }
-        return new String(string,StandardCharsets.US_ASCII);
-    }
+public class RSA {
+    private static Map<Integer, String> keyMap = new HashMap<Integer, String>();
 
-    public static int[][] enc(long x, long z, int n, String s){
-        int[] message = transform(s);
-        int[][]pv = new int[message.length][2];
-        for (int i = 0; i < message.length; i++) {
-            long[] enc = EncDec.enc(x,z,n,message[i]);
-            pv[i][0] = (int)enc[0];
-            pv[i][1] = (int)enc[1];
-        }
-        return pv;
-    }
-
-    public static String dec(int[][]pv, long y, int n){
-        int[] message = new int[pv.length];
-        for (int i = 0; i < pv.length; i++) {
-            message[i] = (int)EncDec.dec(pv[i][0],pv[i][1],y,n);
-        }
-        return transform(message);
-    }
-
-    public static long keyGen(int n){
-        long key_out = 0;
-        int[] key = new int[n];
-        for (int i = 0; i < n; i++) {
-            Random ket_gen = new Random();
-            key[i] = i==0?ket_gen.nextInt(9)+1:ket_gen.nextInt(10);
-        }
-        int index = n-1;
-        for (int bit : key){
-            key_out += (bit * Math.pow(10,index));
-            index--;
-        }
-        return key_out;
-    }
-
-    public static long  keyGenZ(long x, long y, int n){
-        String tmp = (x * y)+"";
-        long z = Long.parseLong(tmp.substring(tmp.length()-n));
-        return Long.parseLong(tmp.substring(tmp.length()-n));
-    }
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         String message = "COMP4450 Assignment 4 " +
                 "Question 1 (10 marks): Please describe your research question. What is it,  " +
                 "you are trying to do? Please give enough details so that any of the tutors can  " +
@@ -157,19 +106,51 @@ public class EncDecStr {
                 "What would you do differently in hindsight? (Max 500 words) ";
         String[] messages = message.split(" ");
         long start = System.currentTimeMillis();
-        long x,z,y;
-        x = keyGen(4);
-        y = keyGen(4);
-        z = keyGenZ(x,y,4);
-        System.out.println("Public key:"+x+" "+z+". Private key:"+y);
+        genKeyPair();
+        System.out.println("Public key:" + keyMap.get(0));
+        System.out.println("Private key:" + keyMap.get(1));
         for(String s : messages){
-            System.out.println("message: "+s);
-            String dec = dec(enc(x,z,4,s), y, 4);
-            System.out.println("dec: "+ dec);
-            System.out.println(s.equals(dec)?"The result is correct":"The result not correct");
+            String messageEn = encrypt(s, keyMap.get(0));
+            System.out.println(s + "\tenc:" + messageEn);
+            String messageDe = decrypt(messageEn, keyMap.get(1));
+            System.out.println("dec:" + messageDe);
+            System.out.println(s.equals(messageDe)?"The result is correct":"The result not correct");
         }
+
         long end = System.currentTimeMillis();
         System.out.println("total use time: " + (end - start)+"ms.");
+
+    }
+
+    public static void genKeyPair() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
+        keyPairGen.initialize(512, new SecureRandom());
+        KeyPair keyPair = keyPairGen.generateKeyPair();
+        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        String publicKeyString = new String(Base64.encodeBase64(publicKey.getEncoded()));
+        String privateKeyString = new String(Base64.encodeBase64((privateKey.getEncoded())));
+        keyMap.put(0, publicKeyString);
+        keyMap.put(1, privateKeyString);
+    }
+
+    public static String encrypt(String str, String publicKey) throws Exception {
+        byte[] decoded = Base64.decodeBase64(publicKey);
+        RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(decoded));
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+        String outStr = Base64.encodeBase64String(cipher.doFinal(str.getBytes(StandardCharsets.US_ASCII)));
+        return outStr;
+    }
+
+    public static String decrypt(String str, String privateKey) throws Exception {
+        byte[] inputByte = Base64.decodeBase64(str.getBytes(StandardCharsets.US_ASCII));
+        byte[] decoded = Base64.decodeBase64(privateKey);
+        RSAPrivateKey priKey = (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(decoded));
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, priKey);
+        String outStr = new String(cipher.doFinal(inputByte));
+        return outStr;
 
     }
 }

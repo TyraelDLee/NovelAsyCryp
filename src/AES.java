@@ -1,71 +1,94 @@
+import org.apache.commons.codec.binary.Base64;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Random;
-/**
- * The encryption/decryption class for string and char
- * Currently only support ASCII
- *
- * More charset will be supported soon,
- * and enc/dec files will be supported soon.
- *
- * @author tyraellee
- * */
-public class EncDecStr {
-    private static int[] transform(String message){
-        byte[] arr = message.getBytes(StandardCharsets.US_ASCII);
-        int[] out = new int[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            out[i] = arr[i];
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class AES {
+    private static final String KEY_ALGORITHM = "AES";
+    private static final String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";//默认的加密算法
+
+    /**
+     * AES 加密操作
+     *
+     * @param content 待加密内容
+     * @param password 加密密码
+     * @return 返回Base64转码后的加密数据
+     */
+    public static String encrypt(String content, String password) {
+        try {
+            Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);// 创建密码器
+
+            byte[] byteContent = content.getBytes("utf-8");
+
+            cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(password));// 初始化为加密模式的密码器
+
+            byte[] result = cipher.doFinal(byteContent);// 加密
+
+            return Base64.encodeBase64String(result);//通过Base64转码返回
+        } catch (Exception ex) {
+            Logger.getLogger(AES.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return out;
+
+        return null;
     }
 
-    private static String transform(int[] arr){
-        byte[] string = new byte[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            string[i] = (byte)arr[i];
+    /**
+     * AES 解密操作
+     *
+     * @param content
+     * @param password
+     * @return
+     */
+    public static String decrypt(String content, String password) {
+
+        try {
+            //实例化
+            Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
+
+            //使用密钥初始化，设置为解密模式
+            cipher.init(Cipher.DECRYPT_MODE, getSecretKey(password));
+
+            //执行操作
+            byte[] result = cipher.doFinal(Base64.decodeBase64(content));
+
+            return new String(result, "utf-8");
+        } catch (Exception ex) {
+            Logger.getLogger(AES.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return new String(string,StandardCharsets.US_ASCII);
+
+        return null;
     }
 
-    public static int[][] enc(long x, long z, int n, String s){
-        int[] message = transform(s);
-        int[][]pv = new int[message.length][2];
-        for (int i = 0; i < message.length; i++) {
-            long[] enc = EncDec.enc(x,z,n,message[i]);
-            pv[i][0] = (int)enc[0];
-            pv[i][1] = (int)enc[1];
+    /**
+     * 生成加密秘钥
+     *
+     * @return
+     */
+    private static SecretKeySpec getSecretKey(final String key) throws NoSuchAlgorithmException{
+        //返回生成指定算法密钥生成器的 KeyGenerator 对象
+        if (null == key || key.length() == 0) {
+            throw new NullPointerException("key CANNOT be null");
         }
-        return pv;
-    }
+        SecretKeySpec key2 = null;
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+        random.setSeed(key.getBytes());
+        try {
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");
+            kgen.init(128, random);
+            SecretKey secretKey = kgen.generateKey();
+            byte[] enCodeFormat = secretKey.getEncoded();
+            key2 = new SecretKeySpec(enCodeFormat, "AES");
+        } catch (NoSuchAlgorithmException ex) {
+            throw new NoSuchAlgorithmException();
+        }
+        return key2;
 
-    public static String dec(int[][]pv, long y, int n){
-        int[] message = new int[pv.length];
-        for (int i = 0; i < pv.length; i++) {
-            message[i] = (int)EncDec.dec(pv[i][0],pv[i][1],y,n);
-        }
-        return transform(message);
-    }
-
-    public static long keyGen(int n){
-        long key_out = 0;
-        int[] key = new int[n];
-        for (int i = 0; i < n; i++) {
-            Random ket_gen = new Random();
-            key[i] = i==0?ket_gen.nextInt(9)+1:ket_gen.nextInt(10);
-        }
-        int index = n-1;
-        for (int bit : key){
-            key_out += (bit * Math.pow(10,index));
-            index--;
-        }
-        return key_out;
-    }
-
-    public static long  keyGenZ(long x, long y, int n){
-        String tmp = (x * y)+"";
-        long z = Long.parseLong(tmp.substring(tmp.length()-n));
-        return Long.parseLong(tmp.substring(tmp.length()-n));
     }
 
     public static void main(String[] args) {
@@ -156,20 +179,16 @@ public class EncDecStr {
                 "Question 8 (10 marks): What have you learned from this research project?  " +
                 "What would you do differently in hindsight? (Max 500 words) ";
         String[] messages = message.split(" ");
+        String key = "testKry";
+        System.out.println("key: "+key);
         long start = System.currentTimeMillis();
-        long x,z,y;
-        x = keyGen(4);
-        y = keyGen(4);
-        z = keyGenZ(x,y,4);
-        System.out.println("Public key:"+x+" "+z+". Private key:"+y);
         for(String s : messages){
             System.out.println("message: "+s);
-            String dec = dec(enc(x,z,4,s), y, 4);
+            String dec = decrypt(encrypt(s,key),key);
             System.out.println("dec: "+ dec);
             System.out.println(s.equals(dec)?"The result is correct":"The result not correct");
         }
         long end = System.currentTimeMillis();
         System.out.println("total use time: " + (end - start)+"ms.");
-
     }
 }

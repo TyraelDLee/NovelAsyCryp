@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c1d69b7f-d3d0-488d-b264-5c237d68ec9c" name="Default Changelist" comment="" />
+    <list default="true" id="c1d69b7f-d3d0-488d-b264-5c237d68ec9c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/commons_codec_1_14.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/testSet" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/a456.iml" beforeDir="false" afterPath="$PROJECT_DIR$/a456.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/a456/Decryption.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/a456/EncDec.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/a456/EncDec.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/a456/EncDecStr.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/a456/EncDecStr.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/a456/Encryption.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/EncDec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/EncDec.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/EncDecStr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/EncDecStr.java" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,13 +27,30 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1c22k1qRU3VhE1VnCVS4IyhH2tm" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="true" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.pathVariables" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -42,6 +71,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="AES" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="AES" />
+      <module name="a456" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="EncDec" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="EncDec" />
       <module name="a456" />
@@ -52,6 +89,14 @@
     </configuration>
     <configuration name="EncDecStr" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="EncDecStr" />
+      <module name="a456" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RSA" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="RSA" />
       <module name="a456" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <method v="2">
@@ -92,6 +137,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.EncDecStr" />
+        <item itemvalue="Application.AES" />
+        <item itemvalue="Application.RSA" />
         <item itemvalue="Application.EncDec" />
       </list>
     </recent_temporary>
@@ -107,11 +154,22 @@
       <option name="presentableId" value="Default" />
       <updated>1589712506384</updated>
       <workItem from="1589712508255" duration="332000" />
-      <workItem from="1589966934001" duration="5662000" />
+      <workItem from="1589966934001" duration="12241000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

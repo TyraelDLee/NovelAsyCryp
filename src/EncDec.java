@@ -33,12 +33,13 @@ public class EncDec {
 
     public static long[] enc(long x, long z, int n, int t){
         Random ran_gen = new Random();
-        int s = ran_gen.nextInt(1000);
+        int s = ran_gen.nextInt((int)Math.pow(10,n-1))+(int)Math.pow(10,n-2);
+        if (s%10==0) s = s+1;
         String xs = (x*s)+"";
         long p = Long.parseLong(xs.substring(xs.length()-n));
         String zst = (z*s+t)+"";
         long v = Long.parseLong(zst.substring(zst.length()-n));
-//        System.out.println("p:"+p+", v:"+v);
+        System.out.println("p:"+p+", v:"+v);
         return new long[]{p,v};
     }
 
@@ -54,9 +55,9 @@ public class EncDec {
     }
 
     public static long dec(long p, long v, long y, int n){
-//        System.out.println("p:"+p+", v:"+v);
+        System.out.println("p:"+p+", v:"+v);
         String yp = (y*p)+"";
-        long u = Long.parseLong(yp.substring(yp.length()-n));
+        long u = yp.length()<=4?Long.parseLong(yp):Long.parseLong(yp.substring(yp.length()-n));
         long t = v-u;
 //        System.out.println("u: "+u+", t: "+t);
         return t;
